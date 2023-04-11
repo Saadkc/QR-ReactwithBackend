@@ -1,0 +1,173 @@
+.user-info {
+  padding: 10px;
+}
+
+.user-info .user-reputation {
+  background: #F3F3F3;
+  margin: 10px;
+  border-radius: 10px;
+  padding: 5px 30px;
+}
+
+.user-info .user-question {
+  margin: 10px;
+}
+
+.user-info .user {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+
+}
+
+.user-info .user .profile-identity {
+  width: 40%;
+
+}
+
+.user-info .user .profile-info {
+  width: 60%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.user-info .user-cell .user-profile,
+.user-info .user-cell .user-card {
+  display: flex;
+  align-items: center;
+}
+
+.user-info .user-cell .identity-info {
+  padding: 0px 10px;
+}
+
+
+.user-info .option input[type="radio"]:disabled+label {
+  /* Use the same styles for the label as if it were enabled */
+  color: #333;
+  cursor: not-allowed;
+}
+
+.user-info .option input[type="radio"]:disabled {
+  /* Hide the radio button, but keep its space */
+  opacity: 0;
+  position: absolute;
+}
+
+.user-info .option input[type="radio"]:disabled+label:before {
+  /* Use the same styles for the radio button as if it were enabled */
+  content: "";
+  display: inline-block;
+  vertical-align: middle;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  border-radius: 50%;
+  border: 1px solid #042C68;
+}
+
+.user-info .option input[type="radio"]:disabled:checked+label:before {
+  /* Use the same styles for the radio button when it's selected */
+  background-color: #042C68;
+
+}
+
+.user-info .condition-questions {
+  display: flex;
+  flex-direction: row;
+}
+
+.user-info .user-question .question-heading {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 25px;
+  color: #042C68;
+  margin: 0;
+}
+
+.user-info .user-question .question .question-name {
+
+  font-size: 18px;
+  line-height: 25px;
+
+}
+
+.user-info .user-question .option {
+  margin: 10px 0px;
+}
+
+.user-info .condition-questions .condition-equipment {
+  width: 40%;
+  background-color: #FFECEC;
+  margin: 5px;
+  padding: 20px;
+}
+
+.user-info .condition-questions .condition-Workstation {
+  width: 60%;
+  background-color: #FFECEC;
+  margin: 5px;
+  padding: 20px;
+}
+
+.user-info .condition-questions .condition-Workstation .cleanlinessandstorage {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+}
+
+.user-info .performance-questions {
+  background-color: #FFECEC;
+  margin: 5px;
+  padding: 20px;
+}
+
+.user-info .performance-questions .attitudes-performance-attire {
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+
+}
+
+.user-info .operational-questions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+}
+
+
+.user-info .operational-questions .Operating-documents {
+  width: 60%;
+  background-color: #FFECEC;
+  margin: 5px;
+  padding: 20px;
+}
+
+.user-info .operational-questions .Operating-documents .electronicandreport {
+  display: flex;
+  justify-content: space-between;
+  width: 70%;
+}
+
+.user-info .operational-questions .map {
+  width: 40%;
+
+}
+
+.user-info .observation {
+  background-color: #F3F3F3;
+  margin: 5px;
+  padding: 20px;
+}
+
+.user-info .profile-info .user-cell span {
+  font-weight: bold;
+}
+
+
+.user-info  .user-list h1 {
+
+  margin-bottom: 0px !important;
+}
