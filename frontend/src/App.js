@@ -41,6 +41,8 @@ const App = () => {
               <Route path="/users" element={<UserList />} />
               <Route path="/notifications" element={<UserNotification />} />
               <Route path="/users/reputation" element={<UserReputation />} />
+              <Route path="/users/controller" element={<UserReputation />} />
+
               </Route>
 
             </>

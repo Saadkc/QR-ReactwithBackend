@@ -5,7 +5,7 @@ const BASE_URL = 'http://192.168.0.136:4000';
 export const postLogin = async (email, password) => {
   try {
     const response = await axios.post(`${BASE_URL}/login`, { email, password });
-    const token = response.data.data[0].auth_key;
+    const token = response.data.data.auth_key;
     localStorage.setItem("token", token); // store the token in local storage
     return response.data.data;
   } catch (error) {

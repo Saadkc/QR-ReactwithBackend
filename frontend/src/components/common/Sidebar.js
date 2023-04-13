@@ -47,6 +47,15 @@ function Sidebar() {
                  </li>
           </ul>
         </div>
+        <div >
+          <ul className='nav-menu'>
+            <li onClick={handleClickAddUser} className='nav-menu-items'>
+              {/* <a href="/addUser"> */}
+                <FontAwesomeIcon icon={faUsers} />
+                <span>Contrôleur</span>
+                 </li>
+          </ul>
+        </div>
       </nav>
     </div>
   );

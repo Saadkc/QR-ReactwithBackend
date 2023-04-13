@@ -74,6 +74,28 @@ app.get('/users', async (req, res) => {
 
 });
 
+app.post('/worker', async (req, res) => {
+
+    const name = req.body.name;
+    const user_id = req.body.user_id;
+    const controller_id = req.body.controller_id;
+
+    await dbQuery('INSERT INTO workers (name, user_id, controller_id,create_time) VALUES (?, ?, ?,CURRENT_TIMESTAMP)', [name, user_id, controller_id]);
+
+    res.status(200).json({ "stauts": "success", "data": "Worker Add Successfully" });
+
+});
+
+app.get('/workers/:id', async (req, res) => {
+
+    const id = req.params.id;
+
+    const controller = await dbQuery('SELECT * FROM workers WHERE controller_id = ?', [id]);
+
+    res.status(200).json({ "stauts": "success", "data": controller });
+
+});
+
 app.get('/user_reputation', async (req, res) => {
 
     var reputation = await dbQuery('SELECT * FROM user_reputation');
@@ -106,7 +128,9 @@ app.post('/login', async (req, res) => {
     const password = req.body.password;
 
     var user = await dbQuery('SELECT * FROM user WHERE email = ? AND password = ?', [email, password]);
+
     if (user.length > 0) {
+
         const { password, ...userWithoutPassword } = user[0];
         res.status(200).json({ "stauts": "success", "data": userWithoutPassword });
     } else {
@@ -128,8 +152,12 @@ app.post('/register', async (req, res) => {
     } else {
         var authKey = await generateAuthKey();
         authKey = 'Bearer ' + authKey;
-        var users = await dbQuery('INSERT INTO user (email,name,password,role_id,auth_key,create_time) VALUES (?,?,?,?,?,CURRENT_TIMESTAMP)', [email, username, pass, role, authKey]);
+        await dbQuery('INSERT INTO user (email,name,password,role_id,auth_key,create_time) VALUES (?,?,?,?,?,CURRENT_TIMESTAMP)', [email, username, pass, role, authKey]);
+
+        var user = await dbQuery('SELECT * FROM user WHERE email = ? AND password = ?', [email, pass]);
+        
         const { password, ...userWithoutPassword } = user[0];
+
         res.status(200).json({ "stauts": "success", "data": userWithoutPassword });
     }
 });
