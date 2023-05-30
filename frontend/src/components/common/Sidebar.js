@@ -8,8 +8,13 @@ import { useNavigate } from 'react-router-dom';
 function Sidebar() {
 
   const navigate = useNavigate();
+  const handleClickAdmin = (event) => {
+    event.preventDefault();
 
-  const handleClick = (event) => {
+    navigate("/admins");
+  };
+
+  const handleClickUser = (event) => {
     event.preventDefault();
 
     navigate("/users");
@@ -28,12 +33,22 @@ function Sidebar() {
       <div className='divider'></div>
 
       <nav>
-        <div >
+      <div >
           <ul className='nav-menu'>
-            <li onClick={handleClick} className='nav-menu-items'>
+            <li onClick={handleClickAdmin} className='nav-menu-items'>
 
               <FontAwesomeIcon icon={faUsers} />
-              <span>Utilisateurs</span>
+              <span>utilisateurs</span>
+
+            </li>
+          </ul>
+        </div>
+        <div >
+          <ul className='nav-menu'>
+            <li onClick={handleClickUser} className='nav-menu-items'>
+
+              <FontAwesomeIcon icon={faUsers} />
+              <span>informations utilisateur</span>
 
             </li>
           </ul>
@@ -44,15 +59,6 @@ function Sidebar() {
               {/* <a href="/addUser"> */}
                 <FontAwesomeIcon icon={faUsers} />
                 <span>Ajouter un utilisateur</span>
-                 </li>
-          </ul>
-        </div>
-        <div >
-          <ul className='nav-menu'>
-            <li onClick={handleClickAddUser} className='nav-menu-items'>
-              {/* <a href="/addUser"> */}
-                <FontAwesomeIcon icon={faUsers} />
-                <span>Contrôleur</span>
                  </li>
           </ul>
         </div>

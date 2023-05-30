@@ -7,6 +7,13 @@ const crypto = require('crypto');
 const bodyParser = require('body-parser');
 const auth = require('./api/auth.js');
 const users = require('./api/users.js');
+const ngrok = require('ngrok');
+
+
+(async function() {
+  const url = await ngrok.connect(3000);
+  console.log('Ngrok URL:', url);
+})();
 
 app.use(bodyParser.urlencoded({ extended: false }));//Its use for mobile app data
 app.use(bodyParser.json());
@@ -63,11 +70,14 @@ app.use(Authorization);
 
 
 app.get('/users', async (req, res) => {
-
-    var user = await dbQuery('SELECT * FROM user JOIN role ON user.role_id = role.id');
-
+    var users = [];
+    var user = await dbQuery('SELECT * FROM user');
     if (user.length > 0) {
-        res.status(200).json({ "stauts": "success", "data": user });
+        user.forEach(element => {
+            const { password, ...userWithoutPassword } = element;
+            users.push(userWithoutPassword);
+        });
+        res.status(200).json({ "stauts": "success", "data": users });
     } else {
         res.status(401).json({ "stauts": "failed", "message": "Invalid user" });
     }
@@ -80,8 +90,8 @@ app.post('/worker', async (req, res) => {
     const user_id = req.body.user_id;
     const controller_id = req.body.controller_id;
 
-    await dbQuery('INSERT INTO workers (name, user_id, controller_id,create_time) VALUES (?, ?, ?,CURRENT_TIMESTAMP)', [name, user_id, controller_id]);
-
+    await dbQuery('INSERT INTO workers ( user_id, controller_id,create_time) VALUES ( ?, ?,CURRENT_TIMESTAMP)', [ user_id, controller_id]);
+    await dbQuery("UPDATE user SET controller_name = ?, controller_id = ? WHERE id = ?", [name, controller_id, user_id]);
     res.status(200).json({ "stauts": "success", "data": "Worker Add Successfully" });
 
 });
@@ -90,7 +100,17 @@ app.get('/workers/:id', async (req, res) => {
 
     const id = req.params.id;
 
-    const controller = await dbQuery('SELECT * FROM workers WHERE controller_id = ?', [id]);
+    const controller = await dbQuery('SELECT w.id, w.create_time, w.user_id, u.name, w.controller_id, u.email, u.role_id FROM workers w INNER JOIN user u ON w.user_id = u.id WHERE w.controller_id = ?', [id]);
+
+    res.status(200).json({ "stauts": "success", "data": controller });
+
+});
+
+app.get('/workers', async (req, res) => {
+
+    const id = req.params.id;
+
+    const controller = await dbQuery('SELECT workers.*, user.id, user.name, user.email, user.role_id FROM workers JOIN user ON workers.user_id = user.id');
 
     res.status(200).json({ "stauts": "success", "data": controller });
 
@@ -110,8 +130,26 @@ app.get('/user_reputation', async (req, res) => {
 
 app.get('/user_reputation/:id', async (req, res) => {
 
-    const userId = req.user.id;
+    const id = req.params.id;
 
+    try {
+        var reputation = await dbQuery('SELECT * FROM user_reputation WHERE controller_id = ?', [id]);
+
+        if (reputation.length > 0) {
+            res.status(200).json({ "stauts": "success", "data": reputation });
+        } else {
+            res.status(200).json({ "stauts": "success", "data": [] });
+        }
+    } catch (error) {
+        res.status(401).json({ "status": "Failed", "message": "Invalid User" });
+    }
+
+});
+
+app.get('/user_reputations/:id', async (req, res) => {
+
+    const userId = req.params.id;
+    
     var reputation = await dbQuery('SELECT * FROM user_reputation WHERE user_id = ?', [userId]);
 
     if (reputation.length > 0) {
@@ -153,9 +191,8 @@ app.post('/register', async (req, res) => {
         var authKey = await generateAuthKey();
         authKey = 'Bearer ' + authKey;
         await dbQuery('INSERT INTO user (email,name,password,role_id,auth_key,create_time) VALUES (?,?,?,?,?,CURRENT_TIMESTAMP)', [email, username, pass, role, authKey]);
-
         var user = await dbQuery('SELECT * FROM user WHERE email = ? AND password = ?', [email, pass]);
-        
+
         const { password, ...userWithoutPassword } = user[0];
 
         res.status(200).json({ "stauts": "success", "data": userWithoutPassword });
@@ -187,8 +224,9 @@ app.post('/form', async (req, res) => {
     const location = req.body['location'];
     const lat = req.body['user_lat'];
     const long = req.body['user_long'];
+    const controller_id = req.body['controller_id'];
 
-    var reputation = await dbQuery('INSERT INTO user_reputation (name,first_name,site,controller,date,time,identity_card,round_controller,cleanliness_workstation,storage_documents,electronic_paperhandrail,round_reports,dress_code,onsite_behaviour,punctuality,reactivity,observations,user_position,user_language,location,user_lat,user_long,create_time,user_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?)', [name, firstName, site, controller, date, time, identityCard, roundController, cleanlinessOfTheWorkstation, storageOfMaterialsAndDocuments, electronicAndOrPaperHandrail, roundReports, dressCode, onSiteBehaviour, punctuality, reactivity, observations, position, language, location, lat, long, req.user.id]);
+    var reputation = await dbQuery('INSERT INTO user_reputation (name,first_name,site,controller,date,time,identity_card,round_controller,cleanliness_workstation,storage_documents,electronic_paperhandrail,round_reports,dress_code,onsite_behaviour,punctuality,reactivity,observations,user_position,user_language,location,user_lat,user_long,create_time,user_id,controller_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,?,?)', [name, firstName, site, controller, date, time, identityCard, roundController, cleanlinessOfTheWorkstation, storageOfMaterialsAndDocuments, electronicAndOrPaperHandrail, roundReports, dressCode, onSiteBehaviour, punctuality, reactivity, observations, position, language, location, lat, long, req.user.id,controller_id]);
 
     var reputationData = await dbQuery('SELECT * FROM user_reputation WHERE id = ?', reputation.insertId);
 
@@ -233,7 +271,7 @@ app.get('/getnotification', async (req, res) => {
     }
 
 });
-
-app.listen(4000, () => {
-    console.log('Server listening on port 3000');
+$PORT = 4000;
+app.listen($PORT, () => {
+    console.log('Server listening on port ' + $PORT);
 }); 
